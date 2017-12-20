@@ -11,7 +11,7 @@ Specyfikacja poszczególnych nowych elementów (lub rozszerzenie poprzednich) sy
 - Niektóre zasoby mogą się przeterminować
 - Starzenie się osadników
 - Dodanie aktorów/zasobów: drewna, drwali, budowlańców, domów (umożliwiającym sen/zakończenie pracy),
-zbieraczy dodatkowego pożywienia o innym terminie przydatności do spożycia itp..
+zbieraczy dodatkowego pożywienia o innym terminie przydatności do spożycia itp.
 - Synchronizacja w cyklu dniowym
 - Cykl zima/lato, wpływający na przydatność do spożycia produktów/szansę zdobycia zasobów
 - Zapisywanie logów symulacji do pliku .txt
