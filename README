@@ -1,24 +1,17 @@
 Projekt zaliczeniowy - Systemy operacyjne 2017/2018
 
-Wstępna deklaracja tematu: Symulacja osadnictwa V2
+Deklaracja tematu: Symulacja osadnictwa V2
 *Problem synchronizacyjny -- rozwinięcie problemu producenta-konsumenta 
 (zmiana cech zasobów, zmiana aktorów i logiki symulacji, konieczność argumentowania braku deadlocka)
 "Osadę zamieszkuje populacja osadników, o ściśle zorganizowanej strukturze podziału obowiązków w osadzie.
 Każdy z osadników posiada ważną względem reszty grupy rolę, która pozwala całej społeczności żyć
 w pewnego rodzaju symbiozie."
 
-Prawdopodobna -- wstępna realizacja poszczególnych nowych elementów symulacji:
-- Niektóre zasoby mogą się przeterminować - 
-planowane rozwiązanie: globalna tablica dla danego zasobu przetrzymująca rekordy 
-typu: "termin przydatności do spożycia", jeśli tablica pusta, to nie ma więcej zasobu.
-Czy będzie to wydajne? Może wymagana/lepsza będzie własna stuktura przetrzymująca "terminy"
-w kolejności od najkrótszego do najdłuższego?
+Specyfikacja poszczególnych nowych elementów (lub rozszerzenie poprzednich) symulacji:
+- Niektóre zasoby mogą się przeterminować
+- Starzenie się osadników
 - Dodanie aktorów/zasobów: drewna, drwali, budowlańców, domów (umożliwiającym sen/zakończenie pracy),
 zbieraczy dodatkowego pożywienia o innym terminie przydatności do spożycia itp..
 - Synchronizacja w cyklu dniowym
-Zmienia to koncepcję realizacji symulacji i użycia wątków.
-Może dodatkowo cykl zima/lato?
-- Jeśli osadnik może się starzeć, to jaki cykl "roczny" będzie odpowiedni?
-Czy nie spowoduje to konfliktów wobec implementacji cyklicznośći (konieczność kolejnej tablicy/
-struktury opisującej wiek osadnika)?
-- Zapisywanie logów symulacji do pliku .txt?
+- Cykl zima/lato, wpływający na przydatność do spożycia produktów/szansę zdobycia zasobów
+- Zapisywanie logów symulacji do pliku .txt
