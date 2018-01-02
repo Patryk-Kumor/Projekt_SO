@@ -2,7 +2,9 @@
 #include <pthread.h>
 #include <deque>
 
+
 using namespace std;
+
 
 class Jedzenie
 {
@@ -15,7 +17,7 @@ public:
     }
     Jedzenie(int ilosc, int termin)
     {
-	food_termin = termin;
+	    food_termin = termin;
         int i;
         for (i=0; i<ilosc; i++)
         {
@@ -34,7 +36,6 @@ public:
             food[i] -= 1;
             if (food[i] <= 0) { ile_przeterminowanych++; }
         }
-
         for (i=0; i<ile_przeterminowanych; i++)
         {
             food.pop_front();
@@ -48,7 +49,7 @@ public:
             cout << food[i] << endl;
         }
     }
-    void Wykorzystaj()
+    void Usun()
     {
         food.pop_front();
     }
@@ -59,25 +60,81 @@ public:
 };
 
 
+class Osadnicy
+{
+public:
+    deque<int> osadnicy;
+    int maks_wiek;
+    Osadnicy()
+    {
+        deque<int> osadnicy;
+    }
+    Osadnicy(int ilosc, int termin)
+    {
+        maks_wiek = termin;
+        int i;
+        for (i=0; i<ilosc; i++)
+        {
+            osadnicy.push_back(18);
+        }
+    }
+    int Ile()
+    {
+        return osadnicy.size();
+    }
+    void Wiek()
+    {
+        int i; int ile_przeterminowanych = 0;
+        for (i=0; i<Ile(); i++)
+        {
+            osadnicy[i] += 1;
+            if (osadnicy[i] >= maks_wiek) { ile_przeterminowanych++; }
+        }
+        for (i=0; i<ile_przeterminowanych; i++)
+        {
+            osadnicy.pop_back();
+        }
+    }
+    void Dodaj()
+    {
+        osadnicy.push_front(18);
+    }
+    void Usun_Najstarszego()
+    {
+        osadnicy.pop_back();
+    }
+    void Usun_Losowego()
+    {
+        // Tymczasowe!!!
+        osadnicy.pop_back();
+    }
+    void Wypisz()
+    {
+        int i;
+        for (i=0; i<Ile(); i++)
+        {
+            cout << osadnicy[i] << endl;
+        }
+    }
+};
+
+
 int main(int argc, char* argv[])
 {
-    Jedzenie food;
-    food = Jedzenie(3,2);
-    cout << food.Ile() << endl << endl;
+    Osadnicy hunters;
+    hunters = Osadnicy(5,80);
 
-    food.Wypisz();
-    cout << endl;
+    hunters.Wypisz(); cout << endl;
+    hunters.Dodaj(); hunters.Wypisz(); cout << endl;
+    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
+    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
+    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
+    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
+    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
 
-    food.Termin(); food.Wypisz(); cout << endl;
-
-    cout << food.Ile() << endl;
-
-    food.Termin(); food.Wypisz(); cout << endl;
-
-    cout << food.Ile() << endl;
-
-    food.Dodaj();
-
-    cout << food.Ile() << endl;
+    hunters.Dodaj(); hunters.Wypisz(); cout << endl;  
+    hunters.Wiek(); hunters.Wypisz(); cout << endl;
+    hunters.Dodaj(); hunters.Wypisz(); cout << endl;   
+    hunters.Wiek(); hunters.Wypisz(); cout << endl;
 }
 
