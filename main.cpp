@@ -28,11 +28,16 @@ public:
     }
     void Termin()
     {
-        int i;
+        int i; int ile_przeterminowanych = 0;
         for (i=0; i<Ile(); i++)
         {
             food[i] -= 1;
-            if (food[i] <= 0) { food.pop_front(); }
+            if (food[i] <= 0) { ile_przeterminowanych++; }
+        }
+
+        for (i=0; i<ile_przeterminowanych; i++)
+        {
+            food.pop_front();
         }
     }
     void Wypisz()
@@ -57,26 +62,22 @@ public:
 int main(int argc, char* argv[])
 {
     Jedzenie food;
-    food = Jedzenie(3,5);
+    food = Jedzenie(3,2);
     cout << food.Ile() << endl << endl;
 
-
     food.Wypisz();
-    food.Termin();   food.Wypisz();
-    food.Wykorzystaj(); food.Wykorzystaj(); food.Wykorzystaj(); food.Dodaj(); food.Dodaj();
-    food.Termin(); food.Wypisz();
-    food.Termin(); food.Wypisz();
-    food.Termin(); food.Wypisz(); food.Dodaj();
-    food.Termin(); food.Wypisz();
-    food.Termin(); food.Wypisz();
-    food.Termin(); food.Wypisz();
     cout << endl;
-    food.Wypisz();
-    food.Termin(); food.Wypisz();
-    food.Termin(); food.Wypisz();
+
     food.Termin(); food.Wypisz(); cout << endl;
-    food.Termin(); food.Wypisz();
-    food.Termin(); food.Wypisz();
-     cout << food.Ile() << endl;
+
+    cout << food.Ile() << endl;
+
+    food.Termin(); food.Wypisz(); cout << endl;
+
+    cout << food.Ile() << endl;
+
+    food.Dodaj();
+
+    cout << food.Ile() << endl;
 }
 
