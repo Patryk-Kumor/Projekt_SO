@@ -41,14 +41,6 @@ public:
             food.pop_front();
         }
     }
-    void Wypisz()
-    {
-        int i;
-        for (i=0; i<Ile(); i++)
-        {
-            cout << food[i] << endl;
-        }
-    }
     void Usun()
     {
         food.pop_front();
@@ -56,6 +48,14 @@ public:
     void Dodaj()
     {
         food.push_back(food_termin);
+    }
+    void Wypisz()
+    {
+        int i;
+        for (i=0; i<Ile(); i++)
+        {
+            cout << food[i] << endl;
+        }
     }
 };
 
@@ -121,20 +121,6 @@ public:
 
 int main(int argc, char* argv[])
 {
-    Osadnicy hunters;
-    hunters = Osadnicy(5,80);
 
-    hunters.Wypisz(); cout << endl;
-    hunters.Dodaj(); hunters.Wypisz(); cout << endl;
-    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
-    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
-    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
-    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
-    hunters.Usun_Najstarszego(); hunters.Wypisz(); cout << endl;
-
-    hunters.Dodaj(); hunters.Wypisz(); cout << endl;  
-    hunters.Wiek(); hunters.Wypisz(); cout << endl;
-    hunters.Dodaj(); hunters.Wypisz(); cout << endl;   
-    hunters.Wiek(); hunters.Wypisz(); cout << endl;
 }
 
