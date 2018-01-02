@@ -8,12 +8,14 @@ class Jedzenie
 {
 public:
     deque<int> food;
+    int food_termin;
     Jedzenie()
     {
         deque<int> food;
     }
     Jedzenie(int ilosc, int termin)
     {
+	food_termin = termin;
         int i;
         for (i=0; i<ilosc; i++)
         {
@@ -30,6 +32,7 @@ public:
         for (i=0; i<Ile(); i++)
         {
             food[i] -= 1;
+            if (food[i] <= 0) { food.pop_front(); }
         }
     }
     void Wypisz()
@@ -44,45 +47,36 @@ public:
     {
         food.pop_front();
     }
-    void Dodaj(int termin)
+    void Dodaj()
     {
-        food.push_back(termin);
+        food.push_back(food_termin);
     }
 };
 
 
 int main(int argc, char* argv[])
 {
-    deque<int> jedzenie;
-
-    jedzenie.push_back(1);
-    cout << jedzenie [0] << endl;
-
-    jedzenie.push_back(2);
-    cout << jedzenie [0] << jedzenie [1] << jedzenie [2] << endl;
-
-    jedzenie.push_front(3);
-    cout << jedzenie [0] << jedzenie [1] << jedzenie [2] << jedzenie [3] << endl;
-
-    jedzenie.push_front(3);
-    cout << jedzenie [-1] << jedzenie [0] << jedzenie [1] << jedzenie [2] << jedzenie [3] << endl;
-
-    cout << jedzenie.size() << endl;;
-
-    jedzenie[0] = 9;
-
-    cout << jedzenie [-1] << jedzenie [0] << jedzenie [1] << jedzenie [2] << jedzenie [3] << endl;
-
     Jedzenie food;
     food = Jedzenie(3,5);
     cout << food.Ile() << endl << endl;
 
 
     food.Wypisz();
-    food.Termin();
-    food.Wypisz();
-    food.Wykorzystaj(); food.Wykorzystaj(); food.Wykorzystaj();
+    food.Termin();   food.Wypisz();
+    food.Wykorzystaj(); food.Wykorzystaj(); food.Wykorzystaj(); food.Dodaj(); food.Dodaj();
+    food.Termin(); food.Wypisz();
+    food.Termin(); food.Wypisz();
+    food.Termin(); food.Wypisz(); food.Dodaj();
+    food.Termin(); food.Wypisz();
+    food.Termin(); food.Wypisz();
+    food.Termin(); food.Wypisz();
     cout << endl;
     food.Wypisz();
+    food.Termin(); food.Wypisz();
+    food.Termin(); food.Wypisz();
+    food.Termin(); food.Wypisz(); cout << endl;
+    food.Termin(); food.Wypisz();
+    food.Termin(); food.Wypisz();
+     cout << food.Ile() << endl;
 }
 
