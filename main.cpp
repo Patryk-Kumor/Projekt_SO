@@ -120,32 +120,76 @@ public:
 };
 
 
+class Dzieci
+{
+public:
+    deque<int> osadnicy;
+    int maks_wiek;
+    int ile_doroslych;
+    Dzieci()
+    {
+        deque<int> osadnicy;
+        maks_wiek = 18;
+    }
+    Dzieci(int ilosc)
+    {
+        int i;
+        for (i=0; i<ilosc; i++)
+        {
+            osadnicy.push_back(1);
+        }
+    }
+    int Ile()
+    {
+        return osadnicy.size();
+    }
+    void Wiek()
+    {
+        int i; int ile_przeterminowanych;
+        for (i=0; i<Ile(); i++)
+        {
+            osadnicy[i] += 1;
+            if (osadnicy[i] >= maks_wiek) { ile_przeterminowanych++; }
+        }
+        for (i=0; i<ile_przeterminowanych; i++)
+        {
+            osadnicy.pop_back();
+        }
+        ile_doroslych += ile_przeterminowanych;
+    }
+    int Dorosli()
+    {
+        int temp = ile_doroslych;
+        ile_doroslych = 0;
+        return temp;
+    }
+    void Dodaj()
+    {
+        osadnicy.push_front(1);
+    }
+    void Usun_Najstarszego()
+    {
+        osadnicy.pop_back();
+    }
+    void Usun_Losowego()
+    {
+        int Maks = osadnicy.size();
+        int E = rand()%Maks+1;
+        osadnicy.erase(osadnicy.begin()+E);
+    }
+    void Wypisz()
+    {
+        int i;
+        for (i=0; i<Ile(); i++)
+        {
+            cout << osadnicy[i] << endl;
+        }
+    }
+};
+
+
 int main(int argc, char* argv[])
 {
-   // int A = atoi(argv[1]);
-   // cout << A;
 
-    deque<int> osadnicy;
-    osadnicy.push_back(1); osadnicy.push_back(2); osadnicy.push_back(3);
-    cout << endl << osadnicy[0] << osadnicy[1] << osadnicy[2] << osadnicy[3] << endl;
-	cout << osadnicy.size();	
-    osadnicy.erase(osadnicy.begin()+1);
-    cout << endl << osadnicy[0] << osadnicy[1] << osadnicy[2] << endl;
-	cout << osadnicy.size();	
-	cout << osadnicy.max_size() << endl << endl;
-
-    Osadnicy nasi;
-    nasi = Osadnicy(3,18);
-    nasi.Wypisz();
-    cout << endl;
-    nasi.Usun_Losowego();
-    nasi.Wypisz();
-    cout << endl;
-    nasi.Usun_Losowego();
-    nasi.Wypisz();
-    cout << endl;
-    nasi.Usun_Losowego();
-    nasi.Wypisz();
-    cout << nasi.Ile() << endl;
 }
 
