@@ -129,10 +129,11 @@ public:
     Dzieci()
     {
         deque<int> osadnicy;
-        maks_wiek = 18;
     }
     Dzieci(int ilosc)
     {
+        maks_wiek = 18;
+        ile_doroslych = 0;
         int i;
         for (i=0; i<ilosc; i++)
         {
@@ -145,7 +146,7 @@ public:
     }
     void Wiek()
     {
-        int i; int ile_przeterminowanych;
+        int i; int ile_przeterminowanych = 0;
         for (i=0; i<Ile(); i++)
         {
             osadnicy[i] += 1;
@@ -190,6 +191,17 @@ public:
 
 int main(int argc, char* argv[])
 {
+    Dzieci hunters;
+    hunters = Dzieci(3);
 
+    hunters.Wypisz(); cout << endl;
+    hunters.Wiek(); 
+    cout << hunters.Ile() << endl<< endl;
+    hunters.Wypisz(); hunters.Dodaj(); hunters.Wypisz(); cout << endl << "tyle:" << hunters.Ile() << endl << endl;
+    for (int i=0; i<=18; i++)
+        {
+            hunters.Wiek(); hunters.Wypisz(); cout << endl;
+            cout << "ile:" << hunters.Ile(); cout << endl;
+        }   
 }
 
