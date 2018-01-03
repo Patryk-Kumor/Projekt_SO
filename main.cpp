@@ -105,8 +105,9 @@ public:
     }
     void Usun_Losowego()
     {
-        // Tymczasowe!!!
-        osadnicy.pop_back();
+        int Maks = osadnicy.size();
+        int E = rand()%Maks+1;
+        osadnicy.erase(osadnicy.begin()+E);
     }
     void Wypisz()
     {
@@ -121,6 +122,30 @@ public:
 
 int main(int argc, char* argv[])
 {
+   // int A = atoi(argv[1]);
+   // cout << A;
 
+    deque<int> osadnicy;
+    osadnicy.push_back(1); osadnicy.push_back(2); osadnicy.push_back(3);
+    cout << endl << osadnicy[0] << osadnicy[1] << osadnicy[2] << osadnicy[3] << endl;
+	cout << osadnicy.size();	
+    osadnicy.erase(osadnicy.begin()+1);
+    cout << endl << osadnicy[0] << osadnicy[1] << osadnicy[2] << endl;
+	cout << osadnicy.size();	
+	cout << osadnicy.max_size() << endl << endl;
+
+    Osadnicy nasi;
+    nasi = Osadnicy(3,18);
+    nasi.Wypisz();
+    cout << endl;
+    nasi.Usun_Losowego();
+    nasi.Wypisz();
+    cout << endl;
+    nasi.Usun_Losowego();
+    nasi.Wypisz();
+    cout << endl;
+    nasi.Usun_Losowego();
+    nasi.Wypisz();
+    cout << nasi.Ile() << endl;
 }
 
