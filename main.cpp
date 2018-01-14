@@ -239,45 +239,43 @@ void *hunting(void *arg)
     if (H>=Z)
     {
         pthread_mutex_lock(&m_meat);
-        cout << "-Upolowane";
         meat.Dodaj();
         pthread_mutex_unlock(&m_meat);
     }
+
+
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
-        cout << "-Zjedzono";
         food.Usun();
         pthread_mutex_unlock(&m_food);
     }
     else
     {
-        cout << "-Nie ma jedzenia";
         pthread_mutex_unlock(&m_food);
-                pthread_mutex_lock(&m_hunters);
+
+        pthread_mutex_lock(&m_hunters);
         hunters.Usun_Losowego();
-        cout << "-Opuszczam wioskę";
-                pthread_mutex_unlock(&m_hunters);
+        pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
     }
+
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
-        cout << "-idę spać" ;
         full_houses++;
         pthread_mutex_unlock(&m_houses);
     }
     else
     {
-        cout << "-nie ma jak spać";
-        pthread_mutex_unlock(&m_food);
-                pthread_mutex_lock(&m_hunters);
+        pthread_mutex_unlock(&m_houses);
+
+        pthread_mutex_lock(&m_hunters);
         hunters.Usun_Losowego();
-        cout << "-usunięto";
-                pthread_mutex_unlock(&m_hunters);
+        pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
     }
-    usleep(100);
+
     pthread_exit(NULL);
     return NULL;
 }
@@ -313,12 +311,12 @@ int main(int argc, char* argv[])
     if (argc == 12) // 11 argumentów
     {
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
-        hunters = Osadnicy(1,80);
-        gatherers = Osadnicy(1,80);
-        cooks = Osadnicy(1,80);
-        woodcutters = Osadnicy(1,80);
-        builders = Osadnicy(1,80);
-        kids = Dzieci(1);
+        hunters = Osadnicy(10,80);
+        gatherers = Osadnicy(10,80);
+        cooks = Osadnicy(10,80);
+        woodcutters = Osadnicy(10,80);
+        builders = Osadnicy(10,80);
+        kids = Dzieci(10);
         //Zasoby: pożywienie, mięso, rośliny, drewno, domy
         meat = Jedzenie(365,25);
         plants = Jedzenie(365,15);
@@ -373,6 +371,7 @@ int main(int argc, char* argv[])
                                                          
             /* działanie wielowątkowe */
             cout << "pętla" << endl;
+	    usleep(1);
             
             for (int i = 0; i<h; i++)
             {
