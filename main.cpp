@@ -9,7 +9,9 @@ pthread_mutex_t m_meat = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_plants = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_food = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_wood = PTHREAD_MUTEX_INITIALIZER;
-
+pthread_mutex_t m_houses = PTHREAD_MUTEX_INITIALIZER;
+int meat; int plants; int food; 
+int wood; int houses;
 
 class Jedzenie
 {
@@ -198,11 +200,30 @@ int main(int argc, char* argv[])
 {
     if (argc == 12) // 11 argumentów
     {
-        cout << "Symulacja rozpoczęta \n";
-        //Aktorzy: myśliwi, kucharze, zbieracze, drwale, budowlańcy
-        //         dzieci
+        //Aktorzy: myśliwi, kucharze, zbieracze, drwale, budowlańcy, dzieci
         //Zasoby: pożywienie, mięso, rośliny, drewno, domy
-        //Deklaracje
+
+        int hunters = 0;
+        int cooks = 0; 
+        int gatherers = 0;
+        int woodcutters = 0;
+        int builders = 0;
+        int kids = 0;
+        cout << "\n--- Symulacja rozpoczęta --- \n" << "Aktorzy: \n -";
+        cout << "myśliwi ["<< hunters <<"], kucharze ["<< cooks <<"], ";
+        cout << "zbieracze ["<< gatherers <<"], drwale ["<< woodcutters <<"], ";
+        cout << "budowlańcy ["<< builders <<"], dzieci ["<< kids <<"]\n";
+        Jedzenie food; food = Jedzenie(1,1);
+        Jedzenie meat; meat = Jedzenie(1,1);
+        Jedzenie plants; plants = Jedzenie(1,1);
+        int food2 = food.Ile();
+        int meat2 = meat.Ile();
+        int plants2 = plants.Ile();
+        wood = 0;
+        houses = 0;
+        cout << "Zasoby: \n -pożywienie ["<< food2 <<"], mięso ["<< meat2 <<"], ";
+        cout << "rośliny ["<< plants2 <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
+
         for (int i=0; i<365; i++)
         {
             //Wywoływanie procedur
