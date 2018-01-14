@@ -446,7 +446,6 @@ void *building(void *arg)
 }
 void *kids_stuff(void *arg)
 {
-
     pthread_exit(NULL);
     return NULL;
 }
