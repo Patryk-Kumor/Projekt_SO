@@ -1,6 +1,7 @@
 #include "iostream"
 #include <pthread.h>
 #include <deque>
+#include <unistd.h>
 
 
 using namespace std;
@@ -200,40 +201,131 @@ Jedzenie plants;
 Jedzenie food; 
 int wood; 
 int houses;
+int full_houses;
+Osadnicy hunters;
+Osadnicy gatherers;
+Osadnicy cooks;
+Osadnicy woodcutters;
+Osadnicy builders;
+Dzieci kids;
+
+
+void *hunting(void *arg)
+{
+    int H = rand()%6+1;
+    int Z = rand()%6+1;
+    if (H>=Z)
+    {
+        pthread_mutex_lock(&m_meat);
+        meat.Dodaj();
+        pthread_mutex_unlock(&m_meat);
+    }
+    return NULL;
+    pthread_mutex_lock(&m_food);
+    if (food.Ile()>0)
+    {
+        food.Usun();
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_food);
+        hunters.Usun_Losowego();
+        pthread_exit(NULL);
+    }
+    pthread_mutex_lock(&m_houses);
+    if (full_houses<houses)
+    {
+        full_houses++;
+        pthread_mutex_unlock(&m_houses);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_food);
+        hunters.Usun_Losowego();
+        pthread_exit(NULL);
+    }
+    usleep(100);
+    pthread_exit(NULL);
+}
+void *gathering(void *arg)
+{
+    return NULL;
+}
+void *cooking(void *arg)
+{
+    return NULL;
+}
+void *cutting(void *arg)
+{
+    return NULL;
+}
+void *building(void *arg)
+{
+    return NULL;
+}
+void *kids_stuff(void *arg)
+{
+    return NULL;
+}
 
 
 int main(int argc, char* argv[])
 {
     if (argc == 12) // 11 argumentów
     {
-        //Aktorzy: myśliwi, kucharze, zbieracze, drwale, budowlańcy, dzieci
+        //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
+        hunters = Osadnicy(5,80);
+        gatherers = Osadnicy(1,80);
+        cooks = Osadnicy(1,80);
+        woodcutters = Osadnicy(1,80);
+        builders = Osadnicy(1,80);
+        kids = Dzieci(1);
         //Zasoby: pożywienie, mięso, rośliny, drewno, domy
-
-        food = Jedzenie(1,20);
-        meat = Jedzenie(1,25);
-        plants = Jedzenie(1,15);
+        meat = Jedzenie(365,25);
+        plants = Jedzenie(365,15);
+        food = Jedzenie(365,20);
         wood = 1;
-        houses = 1;
-
-        Osadnicy hunters; hunters = Osadnicy(1,80);
-        Osadnicy cooks; cooks = Osadnicy(1,80);
-        Osadnicy gatherers; gatherers = Osadnicy(1,80);
-        Osadnicy woodcutters; woodcutters = Osadnicy(1,80);
-        Osadnicy builders; builders = Osadnicy(1,80);
-        Dzieci kids; kids = Dzieci(1);
+        houses = 6;
+        full_houses = 0;
 
         cout << "\n--- Symulacja rozpoczęta --- \n" << "Aktorzy: \n -";
-        cout << "myśliwi ["<< hunters.Ile() <<"], kucharze ["<< cooks.Ile() <<"], ";
-        cout << "zbieracze ["<< gatherers.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
+        cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
+        cout << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
         cout << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
         cout << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
         cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
 
         for (int i=0; i<365; i++)
         {
-            //Wywoływanie procedur
-            //Wywoływanie funkcji
+            int h = hunters.Ile();
+            pthread_t hunters_t[h];
+            cout << "H:" << h << " f: "<< food.Ile() << " m: " << meat.ile() << endl;
+/*
+            pthread_t hunters_t[hunters.Ile()];
+            pthread_t gatherers_t[gatherers.Ile()];
+            pthread_t cooks_t[cooks.Ile()];
+            pthread_t woodcutters_t[woodcutters.Ile()];
+            pthread_t builders_t[builders.Ile()];
+            pthread_t kids_t[kids.Ile()];   
+*/    
+            for (int i = 0; i<h; i++)
+            {
+                pthread_create(&hunters_t[i],NULL,hunting,NULL);
+            }
+            for (int i = 0; i<h; i++)
+            {
+                pthread_join(hunters_t[i], NULL);
+            }
+            food.Termin(); meat.Termin(); plants.Termin();
         }
+        
+        cout << "\n\n--- Symulacja zakończona --- \n" << "Aktorzy: \n -";
+        cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
+        cout << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
+        cout << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
+        cout << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
+        cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
     }
     else
     {
