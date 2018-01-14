@@ -39,12 +39,19 @@ public:
         }
         for (i=0; i<ile_przeterminowanych; i++)
         {
-            food.pop_front();
+            if (Ile() > 0)
+            {
+                food.pop_front();
+            }
+
         }
     }
     void Usun()
     {
-        food.pop_front();
+        if (Ile() > 0)
+        {
+            food.pop_front();
+        }
     }
     void Dodaj()
     {
@@ -93,7 +100,10 @@ public:
         }
         for (i=0; i<ile_przeterminowanych; i++)
         {
-            osadnicy.pop_back();
+            if (Ile() > 0)
+            {
+                osadnicy.pop_back();
+            }          
         }
     }
     void Dodaj()
@@ -102,13 +112,18 @@ public:
     }
     void Usun_Najstarszego()
     {
-        osadnicy.pop_back();
+        if (Ile() > 0)
+        {
+            osadnicy.pop_back();
+        }
     }
     void Usun_Losowego()
     {
+    if (Ile() > 0)
+    {
         int Maks = osadnicy.size();
         int E = rand()%Maks+1;
-        osadnicy.erase(osadnicy.begin()+E);
+        osadnicy.erase(osadnicy.begin()+E);}
     }
     void Wypisz()
     {
@@ -202,6 +217,7 @@ Jedzenie food;
 int wood; 
 int houses;
 int full_houses;
+pthread_mutex_t m_hunters = PTHREAD_MUTEX_INITIALIZER;
 Osadnicy hunters;
 Osadnicy gatherers;
 Osadnicy cooks;
@@ -217,36 +233,47 @@ void *hunting(void *arg)
     if (H>=Z)
     {
         pthread_mutex_lock(&m_meat);
+        cout << "-Upolowane";
         meat.Dodaj();
         pthread_mutex_unlock(&m_meat);
     }
-    return NULL;
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
+        cout << "-Zjedzono";
         food.Usun();
         pthread_mutex_unlock(&m_food);
     }
     else
     {
+        cout << "-Nie ma jedzenia";
         pthread_mutex_unlock(&m_food);
+                pthread_mutex_lock(&m_hunters);
         hunters.Usun_Losowego();
+        cout << "-Opuszczam wioskę";
+                pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
     }
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
+        cout << "-idę spać" ;
         full_houses++;
         pthread_mutex_unlock(&m_houses);
     }
     else
     {
+        cout << "-nie ma jak spać";
         pthread_mutex_unlock(&m_food);
+                pthread_mutex_lock(&m_hunters);
         hunters.Usun_Losowego();
+        cout << "-usunięto";
+                pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
     }
     usleep(100);
     pthread_exit(NULL);
+    return NULL;
 }
 void *gathering(void *arg)
 {
@@ -275,7 +302,7 @@ int main(int argc, char* argv[])
     if (argc == 12) // 11 argumentów
     {
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
-        hunters = Osadnicy(5,80);
+        hunters = Osadnicy(2,80);
         gatherers = Osadnicy(1,80);
         cooks = Osadnicy(1,80);
         woodcutters = Osadnicy(1,80);
@@ -288,6 +315,10 @@ int main(int argc, char* argv[])
         wood = 1;
         houses = 6;
         full_houses = 0;
+        
+        cout << hunters.Ile();
+        hunters.Usun_Losowego();
+        cout << hunters.Ile();
 
         cout << "\n--- Symulacja rozpoczęta --- \n" << "Aktorzy: \n -";
         cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
@@ -298,9 +329,10 @@ int main(int argc, char* argv[])
 
         for (int i=0; i<365; i++)
         {
+            full_houses = 0;
             int h = hunters.Ile();
             pthread_t hunters_t[h];
-            cout << "H:" << h << " f: "<< food.Ile() << " m: " << meat.ile() << endl;
+            cout << "H:" << h << " f: "<< food.Ile() << " m: " << meat.Ile() << endl;
 /*
             pthread_t hunters_t[hunters.Ile()];
             pthread_t gatherers_t[gatherers.Ile()];
@@ -317,7 +349,11 @@ int main(int argc, char* argv[])
             {
                 pthread_join(hunters_t[i], NULL);
             }
+            
             food.Termin(); meat.Termin(); plants.Termin();
+            
+            hunters.Wiek(); gatherers.Wiek(); cooks.Wiek();
+            woodcutters.Wiek(); builders.Wiek();
         }
         
         cout << "\n\n--- Symulacja zakończona --- \n" << "Aktorzy: \n -";
