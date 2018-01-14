@@ -217,7 +217,13 @@ Jedzenie food;
 int wood; 
 int houses;
 int full_houses;
+
+//Deklaracje globalne aktorów
 pthread_mutex_t m_hunters = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_gatherers = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_cooks = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_woodcutters = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_builders = PTHREAD_MUTEX_INITIALIZER;
 Osadnicy hunters;
 Osadnicy gatherers;
 Osadnicy cooks;
@@ -277,22 +283,27 @@ void *hunting(void *arg)
 }
 void *gathering(void *arg)
 {
+    pthread_exit(NULL);
     return NULL;
 }
 void *cooking(void *arg)
 {
+    pthread_exit(NULL);
     return NULL;
 }
 void *cutting(void *arg)
 {
+    pthread_exit(NULL);
     return NULL;
 }
 void *building(void *arg)
 {
+    pthread_exit(NULL);
     return NULL;
 }
 void *kids_stuff(void *arg)
 {
+    pthread_exit(NULL);
     return NULL;
 }
 
@@ -302,7 +313,7 @@ int main(int argc, char* argv[])
     if (argc == 12) // 11 argumentów
     {
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
-        hunters = Osadnicy(2,80);
+        hunters = Osadnicy(1,80);
         gatherers = Osadnicy(1,80);
         cooks = Osadnicy(1,80);
         woodcutters = Osadnicy(1,80);
@@ -316,9 +327,6 @@ int main(int argc, char* argv[])
         houses = 6;
         full_houses = 0;
         
-        cout << hunters.Ile();
-        hunters.Usun_Losowego();
-        cout << hunters.Ile();
 
         cout << "\n--- Symulacja rozpoczęta --- \n" << "Aktorzy: \n -";
         cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
@@ -330,28 +338,68 @@ int main(int argc, char* argv[])
         for (int i=0; i<365; i++)
         {
             full_houses = 0;
-            int h = hunters.Ile();
-            pthread_t hunters_t[h];
-            cout << "H:" << h << " f: "<< food.Ile() << " m: " << meat.Ile() << endl;
-/*
-            pthread_t hunters_t[hunters.Ile()];
-            pthread_t gatherers_t[gatherers.Ile()];
-            pthread_t cooks_t[cooks.Ile()];
-            pthread_t woodcutters_t[woodcutters.Ile()];
-            pthread_t builders_t[builders.Ile()];
-            pthread_t kids_t[kids.Ile()];   
-*/    
+            int h = hunters.Ile(); pthread_t hunters_t[h];
+            int g = gatherers.Ile(); pthread_t gatherers_t[g];
+            int c = cooks.Ile(); pthread_t cooks_t[c];           
+            int w = woodcutters.Ile(); pthread_t woodcutters_t[w];
+            int b = builders.Ile(); pthread_t builders_t[b];
+            int k = kids.Ile(); pthread_t kids_t[k];
+  
+  
             for (int i = 0; i<h; i++)
             {
                 pthread_create(&hunters_t[i],NULL,hunting,NULL);
             }
+            for (int i = 0; i<g; i++)
+            {
+                pthread_create(&gatherers_t[i],NULL,cooking,NULL);
+            }
+            for (int i = 0; i<c; i++)
+            {
+                pthread_create(&cooks_t[i],NULL,hunting,NULL);
+            }
+            for (int i = 0; i<w; i++)
+            {
+                pthread_create(&woodcutters_t[i],NULL,cutting,NULL);
+            }
+            for (int i = 0; i<b; i++)
+            {
+                pthread_create(&builders_t[i],NULL,building,NULL);
+            }
+            for (int i = 0; i<k; i++)
+            {
+                pthread_create(&kids_t[i],NULL,kids_stuff,NULL);
+            }
+                                                         
+            /* działanie wielowątkowe */
+            cout << "pętla" << endl;
+            
             for (int i = 0; i<h; i++)
             {
-                pthread_join(hunters_t[i], NULL);
+                pthread_join(hunters_t[i],NULL);
             }
-            
+            for (int i = 0; i<g; i++)
+            {
+                pthread_join(gatherers_t[i],NULL);
+            }
+            for (int i = 0; i<c; i++)
+            {
+                pthread_join(cooks_t[i],NULL);
+            }
+            for (int i = 0; i<w; i++)
+            {
+                pthread_join(woodcutters_t[i],NULL);
+            }
+            for (int i = 0; i<b; i++)
+            {
+                pthread_join(builders_t[i],NULL);
+            }
+            for (int i = 0; i<k; i++)
+            {
+                pthread_join(kids_t[i],NULL);
+            }
+                                 
             food.Termin(); meat.Termin(); plants.Termin();
-            
             hunters.Wiek(); gatherers.Wiek(); cooks.Wiek();
             woodcutters.Wiek(); builders.Wiek();
         }
