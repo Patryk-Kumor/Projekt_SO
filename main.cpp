@@ -4,6 +4,11 @@
 
 
 using namespace std;
+//Deklaracje globalne
+pthread_mutex_t m_meat = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_plants = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_food = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_wood = PTHREAD_MUTEX_INITIALIZER;
 
 
 class Jedzenie
@@ -191,17 +196,22 @@ public:
 
 int main(int argc, char* argv[])
 {
-    Dzieci hunters;
-    hunters = Dzieci(3);
-
-    hunters.Wypisz(); cout << endl;
-    hunters.Wiek(); 
-    cout << hunters.Ile() << endl<< endl;
-    hunters.Wypisz(); hunters.Dodaj(); hunters.Wypisz(); cout << endl << "tyle:" << hunters.Ile() << endl << endl;
-    for (int i=0; i<=18; i++)
+    if (argc == 12) // 11 argumentów
+    {
+        cout << "Symulacja rozpoczęta \n";
+        //Aktorzy: myśliwi, kucharze, zbieracze, drwale, budowlańcy
+        //         dzieci
+        //Zasoby: pożywienie, mięso, rośliny, drewno, domy
+        //Deklaracje
+        for (int i=0; i<365; i++)
         {
-            hunters.Wiek(); hunters.Wypisz(); cout << endl;
-            cout << "ile:" << hunters.Ile(); cout << endl;
-        }   
+            //Wywoływanie procedur
+            //Wywoływanie funkcji
+        }
+    }
+    else
+    {
+        cout << "Niepoprawna liczba argumentów \n";
+    }
 }
 
