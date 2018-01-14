@@ -446,6 +446,34 @@ void *building(void *arg)
 }
 void *kids_stuff(void *arg)
 {
+    pthread_mutex_lock(&m_food);
+    if (food.Ile()>0)
+    {
+        food.Usun();
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_food);
+        pthread_mutex_lock(&m_kids);
+        kids.Usun_Losowego();
+        pthread_mutex_unlock(&m_kids);
+        pthread_exit(NULL);
+    }
+    pthread_mutex_lock(&m_houses);
+    if (full_houses<houses)
+    {
+        full_houses++;
+        pthread_mutex_unlock(&m_houses);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_houses);
+        pthread_mutex_lock(&m_kids);
+        kids.Usun_Losowego();
+        pthread_mutex_unlock(&m_kids);
+        pthread_exit(NULL);
+    }
     pthread_exit(NULL);
     return NULL;
 }
