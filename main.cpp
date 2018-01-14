@@ -53,6 +53,13 @@ public:
             food.pop_front();
         }
     }
+    void Dodaj(int ile)
+    {
+        for (int i=0; i<ile; i++)
+        {
+            food.push_back(food_termin);
+        }
+    }
     void Dodaj()
     {
         food.push_back(food_termin);
@@ -217,7 +224,6 @@ Jedzenie food;
 int wood; 
 int houses;
 int full_houses;
-
 //Deklaracje globalne aktorów
 pthread_mutex_t m_hunters = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_gatherers = PTHREAD_MUTEX_INITIALIZER;
@@ -239,11 +245,9 @@ void *hunting(void *arg)
     if (H>=Z)
     {
         pthread_mutex_lock(&m_meat);
-        meat.Dodaj();
+        meat.Dodaj(6);
         pthread_mutex_unlock(&m_meat);
     }
-
-
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -253,13 +257,11 @@ void *hunting(void *arg)
     else
     {
         pthread_mutex_unlock(&m_food);
-
         pthread_mutex_lock(&m_hunters);
         hunters.Usun_Losowego();
         pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
     }
-
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
@@ -269,23 +271,88 @@ void *hunting(void *arg)
     else
     {
         pthread_mutex_unlock(&m_houses);
-
         pthread_mutex_lock(&m_hunters);
         hunters.Usun_Losowego();
         pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
     }
-
     pthread_exit(NULL);
     return NULL;
 }
 void *gathering(void *arg)
 {
+    int L = rand()%12+1;
+    if (L >= 6)
+    {
+        pthread_mutex_lock(&m_plants);
+        plants.Dodaj(6);
+        pthread_mutex_unlock(&m_plants);
+    }
+    pthread_mutex_lock(&m_food);
+    if (food.Ile()>0)
+    {
+        food.Usun();
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_food);
+        pthread_mutex_lock(&m_gatherers);
+        gatherers.Usun_Losowego();
+        pthread_mutex_unlock(&m_gatherers);
+        pthread_exit(NULL);
+    }
+    pthread_mutex_lock(&m_houses);
+    if (full_houses<houses)
+    {
+        full_houses++;
+        pthread_mutex_unlock(&m_houses);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_houses);
+        pthread_mutex_lock(&m_gatherers);
+        gatherers.Usun_Losowego();
+        pthread_mutex_unlock(&m_gatherers);
+        pthread_exit(NULL);
+    }
     pthread_exit(NULL);
     return NULL;
 }
 void *cooking(void *arg)
 {
+    int L = rand()%12+1;
+    pthread_mutex_lock(&m_food);
+    food.Dodaj(L);
+    pthread_mutex_unlock(&m_food);
+    pthread_mutex_lock(&m_food);
+    if (food.Ile()>0)
+    {
+        food.Usun();
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_food);
+        pthread_mutex_lock(&m_cooks);
+        cooks.Usun_Losowego();
+        pthread_mutex_unlock(&m_cooks);
+        pthread_exit(NULL);
+    }
+    pthread_mutex_lock(&m_houses);
+    if (full_houses<houses)
+    {
+        full_houses++;
+        pthread_mutex_unlock(&m_houses);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_houses);
+        pthread_mutex_lock(&m_cooks);
+        cooks.Usun_Losowego();
+        pthread_mutex_unlock(&m_cooks);
+        pthread_exit(NULL);
+    }
     pthread_exit(NULL);
     return NULL;
 }
@@ -313,7 +380,7 @@ int main(int argc, char* argv[])
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
         hunters = Osadnicy(10,80);
         gatherers = Osadnicy(10,80);
-        cooks = Osadnicy(10,80);
+        cooks = Osadnicy(15,80);
         woodcutters = Osadnicy(10,80);
         builders = Osadnicy(10,80);
         kids = Dzieci(10);
@@ -322,19 +389,19 @@ int main(int argc, char* argv[])
         plants = Jedzenie(365,15);
         food = Jedzenie(365,20);
         wood = 1;
-        houses = 6;
+        houses = 100;
         full_houses = 0;
-        
-
+        //Opisy
         cout << "\n--- Symulacja rozpoczęta --- \n" << "Aktorzy: \n -";
         cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
         cout << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
         cout << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
         cout << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
         cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
-
+        //Pętla właściwa
         for (int i=0; i<365; i++)
         {
+            //Deklaracje
             full_houses = 0;
             int h = hunters.Ile(); pthread_t hunters_t[h];
             int g = gatherers.Ile(); pthread_t gatherers_t[g];
@@ -342,8 +409,8 @@ int main(int argc, char* argv[])
             int w = woodcutters.Ile(); pthread_t woodcutters_t[w];
             int b = builders.Ile(); pthread_t builders_t[b];
             int k = kids.Ile(); pthread_t kids_t[k];
-  
-  
+            int sum = h + g + c + w + b;
+            //Tworzenie wątków 
             for (int i = 0; i<h; i++)
             {
                 pthread_create(&hunters_t[i],NULL,hunting,NULL);
@@ -367,12 +434,10 @@ int main(int argc, char* argv[])
             for (int i = 0; i<k; i++)
             {
                 pthread_create(&kids_t[i],NULL,kids_stuff,NULL);
-            }
-                                                         
+            }                                                         
             /* działanie wielowątkowe */
-            cout << "pętla" << endl;
-	    usleep(1);
-            
+	        usleep(1); 
+	        //Oczekiwanie na wątki        
             for (int i = 0; i<h; i++)
             {
                 pthread_join(hunters_t[i],NULL);
@@ -397,10 +462,25 @@ int main(int argc, char* argv[])
             {
                 pthread_join(kids_t[i],NULL);
             }
-                                 
+            //Procedury cyklu                                
             food.Termin(); meat.Termin(); plants.Termin();
             hunters.Wiek(); gatherers.Wiek(); cooks.Wiek();
-            woodcutters.Wiek(); builders.Wiek();
+            woodcutters.Wiek(); builders.Wiek(); kids.Wiek(); 
+            //Dorastanie dzieci        
+            if (kids.Dorosli() > 0)
+            {
+                //Randomizacja zawodów
+                int L = rand()%6;
+                if (L == 0) { hunters.Dodaj(); }
+                if (L == 1) { gatherers.Dodaj(); }
+                if (L == 2) { cooks.Dodaj(); }
+                if (L == 3) { woodcutters.Dodaj(); }
+                if (L == 4) { builders.Dodaj(); }               
+            }
+            if (sum % 2)
+            {
+                kids.Dodaj();
+            }
         }
         
         cout << "\n\n--- Symulacja zakończona --- \n" << "Aktorzy: \n -";
