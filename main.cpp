@@ -360,16 +360,93 @@ void *cooking(void *arg)
 }
 void *cutting(void *arg)
 {
+    int L = rand()%2;
+    if (L == 1)
+    {
+        pthread_mutex_lock(&m_wood);
+        wood++;
+        pthread_mutex_unlock(&m_wood); 
+    }   
+    pthread_mutex_lock(&m_food);
+    if (food.Ile()>0)
+    {
+        food.Usun();
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_food);
+        pthread_mutex_lock(&m_woodcutters);
+        woodcutters.Usun_Losowego();
+        pthread_mutex_unlock(&m_woodcutters);
+        pthread_exit(NULL);
+    }
+    pthread_mutex_lock(&m_houses);
+    if (full_houses<houses)
+    {
+        full_houses++;
+        pthread_mutex_unlock(&m_houses);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_houses);
+        pthread_mutex_lock(&m_woodcutters);
+        woodcutters.Usun_Losowego();
+        pthread_mutex_unlock(&m_woodcutters);
+        pthread_exit(NULL);
+    }
     pthread_exit(NULL);
     return NULL;
 }
 void *building(void *arg)
 {
+    pthread_mutex_lock(&m_wood);
+    if (wood >= 100)
+    {
+        wood -= 100;
+        pthread_mutex_unlock(&m_wood);
+        pthread_mutex_lock(&m_houses);
+        houses++;
+        pthread_mutex_unlock(&m_houses);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_wood);
+    }
+    pthread_mutex_lock(&m_food);
+    if (food.Ile()>0)
+    {
+        food.Usun();
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_food);
+        pthread_mutex_lock(&m_builders);
+        builders.Usun_Losowego();
+        pthread_mutex_unlock(&m_builders);
+        pthread_exit(NULL);
+    }
+    pthread_mutex_lock(&m_houses);
+    if (full_houses<houses)
+    {
+        full_houses++;
+        pthread_mutex_unlock(&m_houses);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_houses);
+        pthread_mutex_lock(&m_builders);
+        builders.Usun_Losowego();
+        pthread_mutex_unlock(&m_builders);
+        pthread_exit(NULL);
+    }
     pthread_exit(NULL);
     return NULL;
 }
 void *kids_stuff(void *arg)
 {
+
     pthread_exit(NULL);
     return NULL;
 }
@@ -488,16 +565,15 @@ int main(int argc, char* argv[])
                 if (L == 3) { woodcutters.Dodaj(); }
                 if (L == 4) { builders.Dodaj(); }               
             }
-            //cooks.Dodaj();
+            //Nowe dzieci
             if (sum % 2)
             {
                 kids.Dodaj();
             }
-
+	    //Zapis do pliku my_log.txt
             to_file(i);
         }
-        
-        
+        //Podsumowanie      
         cout << "\n\n--- Symulacja zakończona --- \n" << "Aktorzy: \n -";
         cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
         cout << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
