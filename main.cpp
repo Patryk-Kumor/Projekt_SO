@@ -1,4 +1,5 @@
 #include "iostream"
+#include <fstream>
 #include <pthread.h>
 #include <deque>
 #include <unistd.h>
@@ -230,6 +231,7 @@ pthread_mutex_t m_gatherers = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_cooks = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_woodcutters = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_builders = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t m_kids = PTHREAD_MUTEX_INITIALIZER;
 Osadnicy hunters;
 Osadnicy gatherers;
 Osadnicy cooks;
@@ -245,7 +247,7 @@ void *hunting(void *arg)
     if (H>=Z)
     {
         pthread_mutex_lock(&m_meat);
-        meat.Dodaj(6);
+        meat.Dodaj(2);
         pthread_mutex_unlock(&m_meat);
     }
     pthread_mutex_lock(&m_food);
@@ -285,7 +287,7 @@ void *gathering(void *arg)
     if (L >= 6)
     {
         pthread_mutex_lock(&m_plants);
-        plants.Dodaj(6);
+        plants.Dodaj(2);
         pthread_mutex_unlock(&m_plants);
     }
     pthread_mutex_lock(&m_food);
@@ -321,7 +323,7 @@ void *gathering(void *arg)
 }
 void *cooking(void *arg)
 {
-    int L = rand()%12+1;
+    int L = rand()%6+1;
     pthread_mutex_lock(&m_food);
     food.Dodaj(L);
     pthread_mutex_unlock(&m_food);
@@ -372,11 +374,22 @@ void *kids_stuff(void *arg)
     return NULL;
 }
 
+ofstream log;
+void to_file(int i)
+{
+        log << "\n-- Dzień "<< i << " --- \n" << "Aktorzy: \n -";
+        log << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
+        log << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
+        log << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
+        log << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
+        log << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
+}
 
 int main(int argc, char* argv[])
 {
     if (argc == 12) // 11 argumentów
     {
+        log.open("my_log.txt");
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
         hunters = Osadnicy(10,80);
         gatherers = Osadnicy(10,80);
@@ -399,7 +412,7 @@ int main(int argc, char* argv[])
         cout << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
         cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
         //Pętla właściwa
-        for (int i=0; i<365; i++)
+        for (int i=0; i<=365; i++)
         {
             //Deklaracje
             full_houses = 0;
@@ -435,8 +448,6 @@ int main(int argc, char* argv[])
             {
                 pthread_create(&kids_t[i],NULL,kids_stuff,NULL);
             }                                                         
-            /* działanie wielowątkowe */
-	        usleep(1); 
 	        //Oczekiwanie na wątki        
             for (int i = 0; i<h; i++)
             {
@@ -477,22 +488,27 @@ int main(int argc, char* argv[])
                 if (L == 3) { woodcutters.Dodaj(); }
                 if (L == 4) { builders.Dodaj(); }               
             }
+            //cooks.Dodaj();
             if (sum % 2)
             {
                 kids.Dodaj();
             }
+
+            to_file(i);
         }
+        
         
         cout << "\n\n--- Symulacja zakończona --- \n" << "Aktorzy: \n -";
         cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
         cout << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
         cout << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
         cout << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
-        cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
+        cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";      
     }
     else
     {
         cout << "Niepoprawna liczba argumentów \n";
     }
+    //log.close("my_log.txt");
 }
 
