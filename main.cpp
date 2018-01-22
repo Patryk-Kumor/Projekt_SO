@@ -19,7 +19,7 @@ public:
     }
     Jedzenie(int ilosc, int termin)
     {
-	    food_termin = termin;
+	food_termin = termin;
         int i;
         for (i=0; i<ilosc; i++)
         {
@@ -44,7 +44,6 @@ public:
             {
                 food.pop_front();
             }
-
         }
     }
     void Usun()
@@ -213,6 +212,8 @@ public:
 };
 
 
+//Czy zima?
+bool is_winter;
 //Deklaracje globalne zasobów
 pthread_mutex_t m_meat = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t m_plants = PTHREAD_MUTEX_INITIALIZER;
@@ -247,7 +248,8 @@ void *hunting(void *arg)
     if (H>=Z)
     {
         pthread_mutex_lock(&m_meat);
-        meat.Dodaj(2);
+        if (is_winter) { meat.Dodaj(4); }
+        else { meat.Dodaj(2); }
         pthread_mutex_unlock(&m_meat);
     }
     pthread_mutex_lock(&m_food);
@@ -287,7 +289,8 @@ void *gathering(void *arg)
     if (L >= 6)
     {
         pthread_mutex_lock(&m_plants);
-        plants.Dodaj(2);
+        if (is_winter) { plants.Dodaj(2); }
+        else { plants.Dodaj(4); }
         pthread_mutex_unlock(&m_plants);
     }
     pthread_mutex_lock(&m_food);
@@ -478,6 +481,7 @@ void *kids_stuff(void *arg)
     return NULL;
 }
 
+
 ofstream log;
 void to_file(int i)
 {
@@ -489,26 +493,28 @@ void to_file(int i)
         log << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
 }
 
+
 int main(int argc, char* argv[])
 {
-    if (argc == 12) // 11 argumentów
+    if (argc == 12) //Wymaga 11 argumentów
     {
-        log.open("my_log.txt");
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
-        hunters = Osadnicy(10,80);
-        gatherers = Osadnicy(10,80);
-        cooks = Osadnicy(15,80);
-        woodcutters = Osadnicy(10,80);
-        builders = Osadnicy(10,80);
-        kids = Dzieci(10);
-        //Zasoby: pożywienie, mięso, rośliny, drewno, domy
-        meat = Jedzenie(365,25);
-        plants = Jedzenie(365,15);
-        food = Jedzenie(365,20);
-        wood = 1;
-        houses = 100;
-        full_houses = 0;
-        //Opisy
+        int H = atoi(argv[1]); hunters = Osadnicy(H,80);
+        int G = atoi(argv[2]); gatherers = Osadnicy(G,80);
+        int C = atoi(argv[3]); cooks = Osadnicy(C,80);
+        int W = atoi(argv[4]); woodcutters = Osadnicy(W,80);
+        int B = atoi(argv[5]); builders = Osadnicy(B,80);
+        int K = atoi(argv[6]); kids = Dzieci(K);
+        //Zasoby: pożywienie, mięso, rośliny, drewno, domy 
+        int M = atoi(argv[7]); meat = Jedzenie(M,25);
+        int P = atoi(argv[8]); plants = Jedzenie(P,15);
+        int F = atoi(argv[9]); food = Jedzenie(F,20);
+        wood = atoi(argv[10]);
+        houses = atoi(argv[11]);
+        full_houses = 0;        
+        //Plik                      
+        log.open("my_log.txt");
+        //Opis wstępny przy rozpoczęciu symulacji
         cout << "\n--- Symulacja rozpoczęta --- \n" << "Aktorzy: \n -";
         cout << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
         cout << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
@@ -516,8 +522,10 @@ int main(int argc, char* argv[])
         cout << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
         cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
         //Pętla właściwa
+        is_winter = true;
         for (int i=0; i<=365; i++)
         {
+            if (i > 182) { is_winter = true; }
             //Deklaracje
             full_houses = 0;
             int h = hunters.Ile(); pthread_t hunters_t[h];

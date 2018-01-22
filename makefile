@@ -2,4 +2,4 @@ main: main.cpp
 	g++ -o main main.cpp -Wall -Werror -pthread
 
 run: main
-	./main 1 2 3 4 5 6 7 8 9 10 11
+	./main 5 5 5 4 1 4 20 8 8 0 23
