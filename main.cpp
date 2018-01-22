@@ -8,6 +8,7 @@
 using namespace std;
 
 
+//Klasa przetrzymująca terminy przydatności do spożycia
 class Jedzenie
 {
 public:
@@ -75,6 +76,7 @@ public:
 };
 
 
+//Klasa przetrzymująca wiek dorosłych ( >18 ) osadników
 class Osadnicy
 {
 public:
@@ -143,6 +145,7 @@ public:
 };
 
 
+//Klasa przetrzymująca wiek dorosłych ( <18 ) osadników
 class Dzieci
 {
 public:
@@ -241,6 +244,7 @@ Osadnicy builders;
 Dzieci kids;
 
 
+
 void *hunting(void *arg)
 {
     int H = rand()%6+1;
@@ -248,8 +252,8 @@ void *hunting(void *arg)
     if (H>=Z)
     {
         pthread_mutex_lock(&m_meat);
-        if (is_winter) { meat.Dodaj(4); }
-        else { meat.Dodaj(2); }
+        if (is_winter) { meat.Dodaj(5); }
+        else { meat.Dodaj(4); }
         pthread_mutex_unlock(&m_meat);
     }
     pthread_mutex_lock(&m_food);
@@ -290,7 +294,7 @@ void *gathering(void *arg)
     {
         pthread_mutex_lock(&m_plants);
         if (is_winter) { plants.Dodaj(2); }
-        else { plants.Dodaj(4); }
+        else { plants.Dodaj(3); }
         pthread_mutex_unlock(&m_plants);
     }
     pthread_mutex_lock(&m_food);
@@ -525,7 +529,14 @@ int main(int argc, char* argv[])
         is_winter = true;
         for (int i=0; i<=365; i++)
         {
-            if (i > 182) { is_winter = true; }
+            if (((i > 90)&&(i<180)) || ((i > 270)&&(i<365)))
+            {
+               is_winter = true;
+            }
+            else
+            {
+               is_winter = false;
+            }
             //Deklaracje
             full_houses = 0;
             int h = hunters.Ile(); pthread_t hunters_t[h];
