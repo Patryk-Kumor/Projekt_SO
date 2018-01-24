@@ -249,7 +249,7 @@ void *hunting(void *arg)
 {
     int H = rand()%6+1;
     int Z = rand()%6+1;
-    if (H>=Z)
+    if ((!is_winter && (H>=Z))||(is_winter && (H>(Z-2))))
     {
         pthread_mutex_lock(&m_meat);
         if (is_winter) { meat.Dodaj(5); }
@@ -290,11 +290,11 @@ void *hunting(void *arg)
 void *gathering(void *arg)
 {
     int L = rand()%12+1;
-    if (L >= 6)
+    if ((!is_winter && (L >= 6))|| (is_winter && (L >= 8)))
     {
         pthread_mutex_lock(&m_plants);
-        if (is_winter) { plants.Dodaj(2); }
-        else { plants.Dodaj(3); }
+        if (is_winter) { L = rand()%6+1; plants.Dodaj(L); }
+        else { L = rand()%8+1; plants.Dodaj(L); }
         pthread_mutex_unlock(&m_plants);
     }
     pthread_mutex_lock(&m_food);
@@ -330,10 +330,17 @@ void *gathering(void *arg)
 }
 void *cooking(void *arg)
 {
-    int L = rand()%6+1;
+    int L1 = rand()%6+1;
+    int L2 = rand()%6+1;
     pthread_mutex_lock(&m_food);
-    food.Dodaj(L);
+    food.Dodaj(L1+L2);
     pthread_mutex_unlock(&m_food);
+    pthread_mutex_lock(&m_meat);
+    meat.Usun();
+    pthread_mutex_unlock(&m_meat);
+    pthread_mutex_lock(&m_plants);
+    plants.Usun();
+    pthread_mutex_unlock(&m_plants);
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -503,16 +510,16 @@ int main(int argc, char* argv[])
     if (argc == 12) //Wymaga 11 argumentów
     {
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
-        int H = atoi(argv[1]); hunters = Osadnicy(H,80);
-        int G = atoi(argv[2]); gatherers = Osadnicy(G,80);
+        int H = atoi(argv[1]); hunters = Osadnicy(H,75);
+        int G = atoi(argv[2]); gatherers = Osadnicy(G,75);
         int C = atoi(argv[3]); cooks = Osadnicy(C,80);
-        int W = atoi(argv[4]); woodcutters = Osadnicy(W,80);
-        int B = atoi(argv[5]); builders = Osadnicy(B,80);
+        int W = atoi(argv[4]); woodcutters = Osadnicy(W,65);
+        int B = atoi(argv[5]); builders = Osadnicy(B,70);
         int K = atoi(argv[6]); kids = Dzieci(K);
         //Zasoby: pożywienie, mięso, rośliny, drewno, domy 
         int M = atoi(argv[7]); meat = Jedzenie(M,25);
         int P = atoi(argv[8]); plants = Jedzenie(P,15);
-        int F = atoi(argv[9]); food = Jedzenie(F,20);
+        int F = atoi(argv[9]); food = Jedzenie(F,30);
         wood = atoi(argv[10]);
         houses = atoi(argv[11]);
         full_houses = 0;        

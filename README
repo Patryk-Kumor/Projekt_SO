@@ -15,3 +15,7 @@ zbieraczy dodatkowego pożywienia o innym terminie przydatności do spożycia it
 - Synchronizacja w cyklu dniowym
 - Cykl zima/lato, wpływający na przydatność do spożycia produktów/szansę zdobycia zasobów
 - Zapisywanie logów symulacji do pliku .txt
+
+Objaśnienie argumentów:
+./main 5 5 15 4 1 0 50 75 200 0 23 odpowiada kolejno ilości:
+łowców, zbieraczy, kucharzy, drwali, budowlańców, dzieci, mięsa, roślin, pożywienia, drewna, domów
