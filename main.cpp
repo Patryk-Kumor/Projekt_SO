@@ -246,15 +246,24 @@ Dzieci kids;
 
 void *hunting(void *arg)
 {
+    //Łowy
     int H = rand()%6+1;
     int Z = rand()%6+1;
-    if (  (not is_winter and (H>=Z) ) or (is_winter and (H>(Z-2)) )  )
+    if ((not is_winter and (H>=Z)) or (is_winter and (H>(Z-2))))
     {
         pthread_mutex_lock(&m_meat);
-        if (is_winter) { meat.Dodaj(5); }
-        else { meat.Dodaj(4); }
-        pthread_mutex_unlock(&m_meat);
+        if (is_winter) 
+        {
+            meat.Dodaj(6); 
+            pthread_mutex_unlock(&m_meat);
+        }
+        else
+        { 
+            meat.Dodaj(4); 
+            pthread_mutex_unlock(&m_meat);
+        }        
     }
+    //Żywienie
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -268,7 +277,9 @@ void *hunting(void *arg)
         hunters.Usun_Losowego();
         pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
+        return NULL;
     }
+    //Sen
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
@@ -282,20 +293,30 @@ void *hunting(void *arg)
         hunters.Usun_Losowego();
         pthread_mutex_unlock(&m_hunters);
         pthread_exit(NULL);
+        return NULL;
     }
     pthread_exit(NULL);
     return NULL;
 }
 void *gathering(void *arg)
 {
+    //Zbieranie
     int L = rand()%12+1;
-    if (  (not is_winter and (L>=6) ) or (is_winter and (L>=8) )  )
+    if ((not is_winter and (L>=6)) or (is_winter and (L>=9)))
     {
         pthread_mutex_lock(&m_plants);
-        if (is_winter) { plants.Dodaj(3); }
-        else { plants.Dodaj(6); }
-        pthread_mutex_unlock(&m_plants);
+        if (is_winter)
+        { 
+            plants.Dodaj(4);
+            pthread_mutex_unlock(&m_plants);
+        }
+        else
+        { 
+            plants.Dodaj(8);
+            pthread_mutex_unlock(&m_plants);
+        }
     }
+    //Żywienie
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -309,7 +330,9 @@ void *gathering(void *arg)
         gatherers.Usun_Losowego();
         pthread_mutex_unlock(&m_gatherers);
         pthread_exit(NULL);
+        return NULL;
     }
+    //Sen
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
@@ -323,18 +346,20 @@ void *gathering(void *arg)
         gatherers.Usun_Losowego();
         pthread_mutex_unlock(&m_gatherers);
         pthread_exit(NULL);
+        return NULL;
     }
     pthread_exit(NULL);
     return NULL;
 }
 void *cooking(void *arg)
 {
+    //Gotowanie mięsa
     pthread_mutex_lock(&m_meat);
     if ( meat.Ile() > 0)
     {
         meat.Usun();
         pthread_mutex_unlock(&m_meat);
-        int L = rand()%8+1;
+        int L = rand()%6+1;
         pthread_mutex_lock(&m_food);
         food.Dodaj(L);
         pthread_mutex_unlock(&m_food);
@@ -343,6 +368,7 @@ void *cooking(void *arg)
     {
         pthread_mutex_unlock(&m_meat);
     }
+    //Gotowanie warzyw
     pthread_mutex_lock(&m_plants);
     if ( plants.Ile() > 0)
     {
@@ -357,6 +383,7 @@ void *cooking(void *arg)
     {
         pthread_mutex_unlock(&m_plants);
     }
+    //Żywienie
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -370,7 +397,9 @@ void *cooking(void *arg)
         cooks.Usun_Losowego();
         pthread_mutex_unlock(&m_cooks);
         pthread_exit(NULL);
+        return NULL;
     }
+    //Sen
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
@@ -384,12 +413,14 @@ void *cooking(void *arg)
         cooks.Usun_Losowego();
         pthread_mutex_unlock(&m_cooks);
         pthread_exit(NULL);
+        return NULL;
     }
     pthread_exit(NULL);
     return NULL;
 }
 void *cutting(void *arg)
 {
+    //Cięcie
     int L = rand()%2;
     if (L == 1)
     {
@@ -397,6 +428,7 @@ void *cutting(void *arg)
         wood++;
         pthread_mutex_unlock(&m_wood); 
     }   
+    //Żywienie
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -410,7 +442,9 @@ void *cutting(void *arg)
         woodcutters.Usun_Losowego();
         pthread_mutex_unlock(&m_woodcutters);
         pthread_exit(NULL);
+        return NULL;
     }
+    //Sen
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
@@ -424,12 +458,14 @@ void *cutting(void *arg)
         woodcutters.Usun_Losowego();
         pthread_mutex_unlock(&m_woodcutters);
         pthread_exit(NULL);
+        return NULL;
     }
     pthread_exit(NULL);
     return NULL;
 }
 void *building(void *arg)
 {
+    //Budowa
     pthread_mutex_lock(&m_wood);
     if (wood >= 100)
     {
@@ -443,6 +479,7 @@ void *building(void *arg)
     {
         pthread_mutex_unlock(&m_wood);
     }
+    //Żywienie
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -456,7 +493,9 @@ void *building(void *arg)
         builders.Usun_Losowego();
         pthread_mutex_unlock(&m_builders);
         pthread_exit(NULL);
+        return NULL;
     }
+    //Sen
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
@@ -470,12 +509,14 @@ void *building(void *arg)
         builders.Usun_Losowego();
         pthread_mutex_unlock(&m_builders);
         pthread_exit(NULL);
+        return NULL;
     }
     pthread_exit(NULL);
     return NULL;
 }
 void *kids_stuff(void *arg)
 {
+    //Żywienie
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -489,7 +530,9 @@ void *kids_stuff(void *arg)
         kids.Usun_Losowego();
         pthread_mutex_unlock(&m_kids);
         pthread_exit(NULL);
+        return NULL;
     }
+    //Sen
     pthread_mutex_lock(&m_houses);
     if (full_houses<houses)
     {
@@ -503,30 +546,34 @@ void *kids_stuff(void *arg)
         kids.Usun_Losowego();
         pthread_mutex_unlock(&m_kids);
         pthread_exit(NULL);
+        return NULL;
     }
     pthread_exit(NULL);
     return NULL;
 }
 
 
+//Zapis do pliku
 ofstream log;
 void to_file(int i)
 {
-        log << "\n-- Dzień "<< i << " --- \n";
+    log << "\n-- Dzień "<< i << " --- \n";
 	if (is_winter) { log << "Zima \n"; }
 	else { log << "Lato  \n"; }
 	log << "Aktorzy: \n -";
-        log << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
-        log << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
-        log << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
-        log << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
-        log << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n\n";
+    log << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
+    log << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
+    log << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
+    log << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
+    log << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n\n";
 }
 
 
+//MAIN
 int main(int argc, char* argv[])
 {
-    if (argc == 12) //Wymaga 11 argumentów
+    //Wymaga 11 argumentów
+    if (argc == 12) 
     {
         //Aktorzy: myśliwi, zbieracze, kucharze, drwale, budowlańcy, dzieci
         int H = atoi(argv[1]); hunters = Osadnicy(H,75);
@@ -555,6 +602,7 @@ int main(int argc, char* argv[])
         is_winter = true;
         for (int i=0; i<=365; i++)
         {
+            //Cykl lato/zima
             if (((i > 90)&&(i<180)) || ((i > 270)&&(i<365)))
             {
                is_winter = true;
@@ -622,23 +670,33 @@ int main(int argc, char* argv[])
             {
                 pthread_join(kids_t[i],NULL);
             }
-            //Procedury cyklu                                
-            food.Termin(); meat.Termin(); plants.Termin();
+            //Procedury cyklu
+            if (is_winter and i % 2) 
+            { food.Termin(); meat.Termin(); plants.Termin(); }
+            if (is_winter and not(i % 2)) 
+            {  }     
+            else
+            { food.Termin(); meat.Termin(); plants.Termin(); }                             
+            //Starzenie się osadników
             hunters.Wiek(); gatherers.Wiek(); cooks.Wiek();
             woodcutters.Wiek(); builders.Wiek(); kids.Wiek(); 
-            //Dorastanie dzieci        
-            if (kids.Dorosli() > 0)
+            //Dorastanie dzieci
+            int K = kids.Dorosli();     
+            if (K > 0)
             {
-                //Randomizacja zawodów
-                int L = rand()%5;
-                if (L == 0) { hunters.Dodaj(); }
-                if (L == 1) { gatherers.Dodaj(); }
-                if (L == 2) { cooks.Dodaj(); }
-                if (L == 3) { woodcutters.Dodaj(); }
-                if (L == 4) { builders.Dodaj(); }               
+                for (int i = 0; i<K; i++)
+                {
+                    //Randomizacja zawodów
+                    int L = rand()%5;
+                    if (L == 0) { hunters.Dodaj(); }
+                    if (L == 1) { gatherers.Dodaj(); }
+                    if (L == 2) { cooks.Dodaj(); }
+                    if (L == 3) { woodcutters.Dodaj(); }
+                    if (L == 4) { builders.Dodaj(); } 
+                }              
             }
             //Nowe dzieci
-            if (sum % 2)
+            if ((sum % 2) and (sum != 0))
             {
                 kids.Dodaj();
             }
@@ -651,12 +709,13 @@ int main(int argc, char* argv[])
         cout << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
         cout << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
         cout << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
-        cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";      
+        cout << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
+        //Koniec
+        log.close();      
     }
     else
     {
         cout << "Niepoprawna liczba argumentów \n";
-    }
-    log.close();
+    } 
 }
 

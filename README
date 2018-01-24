@@ -1,5 +1,7 @@
 Projekt zaliczeniowy - Systemy operacyjne 2017/2018
 
+
+
 Deklaracja tematu: Symulacja osadnictwa V2
 *Problem synchronizacyjny -- rozwinięcie problemu producenta-konsumenta 
 (zmiana cech zasobów, zmiana aktorów i logiki symulacji, konieczność argumentowania braku deadlocka)
@@ -16,7 +18,10 @@ zbieraczy dodatkowego pożywienia o innym terminie przydatności do spożycia it
 - Cykl zima/lato, wpływający na przydatność do spożycia produktów/szansę zdobycia zasobów
 - Zapisywanie logów symulacji do pliku .txt
 
+
+
 Objaśnienie argumentów:
-./main 5 5 15 4 1 0 50 75 200 0 23 odpowiada kolejno ilości:
-łowców, zbieraczy, kucharzy, drwali, budowlańców, dzieci, mięsa, roślin, pożywienia, drewna, domów
-Domyślny dobór osadników, wraz z odpowiednią implementacją zasobów daje im szansę na przeżycie
+./main 8 6 15 4 1 2 60 80 120 0 34 odpowiada kolejno ilości:
+łowców, zbieraczy, kucharzy, drwali, budowlańców, dzieci, mięsa, roślin, pożywienia, drewna, domów.
+
+Domyślny dobór argumentów, wraz z odpowiednią implementacją zasobów, daje im dużo większą szansę na przeżycie niż osadnictwo V1
