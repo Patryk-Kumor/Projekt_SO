@@ -292,12 +292,10 @@ void *gathering(void *arg)
     if (  (not is_winter and (L>=6) ) or (is_winter and (L>=8) )  )
     {
         pthread_mutex_lock(&m_plants);
-        if (is_winter) { meat.Dodaj(5); }
-        else { meat.Dodaj(4); }
+        if (is_winter) { plants.Dodaj(3); }
+        else { plants.Dodaj(6); }
         pthread_mutex_unlock(&m_plants);
     }
-    pthread_mutex_lock(&m_food);
-
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -350,7 +348,7 @@ void *cooking(void *arg)
     {
         plants.Usun();
         pthread_mutex_unlock(&m_plants);
-        int L = rand()%6+1;
+        int L = rand()%4+1;
         pthread_mutex_lock(&m_food);
         food.Dodaj(L);
         pthread_mutex_unlock(&m_food);
@@ -514,12 +512,15 @@ void *kids_stuff(void *arg)
 ofstream log;
 void to_file(int i)
 {
-        log << "\n-- Dzień "<< i << " --- \n" << "Aktorzy: \n -";
+        log << "\n-- Dzień "<< i << " --- \n";
+	if (is_winter) { log << "Zima \n"; }
+	else { log << "Lato  \n"; }
+	log << "Aktorzy: \n -";
         log << "myśliwi ["<< hunters.Ile() <<"], zbieracze ["<< gatherers.Ile() <<"], ";
         log << "kucharze ["<< cooks.Ile() <<"], drwale ["<< woodcutters.Ile() <<"], ";
         log << "budowlańcy ["<< builders.Ile() <<"], dzieci ["<< kids.Ile() <<"]\n";
         log << "Zasoby: \n -pożywienie ["<< food.Ile() <<"], mięso ["<< meat.Ile() <<"], ";
-        log << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n";
+        log << "rośliny ["<< plants.Ile() <<"], drewno ["<< wood <<"], domy ["<< houses <<"]\n\n";
 }
 
 
@@ -535,9 +536,9 @@ int main(int argc, char* argv[])
         int B = atoi(argv[5]); builders = Osadnicy(B,70);
         int K = atoi(argv[6]); kids = Dzieci(K);
         //Zasoby: pożywienie, mięso, rośliny, drewno, domy 
-        int M = atoi(argv[7]); meat = Jedzenie(M,2500);
-        int P = atoi(argv[8]); plants = Jedzenie(P,1500);
-        int F = atoi(argv[9]); food = Jedzenie(F,3000);
+        int M = atoi(argv[7]); meat = Jedzenie(M,25);
+        int P = atoi(argv[8]); plants = Jedzenie(P,15);
+        int F = atoi(argv[9]); food = Jedzenie(F,30);
         wood = atoi(argv[10]);
         houses = atoi(argv[11]);
         full_houses = 0;        
