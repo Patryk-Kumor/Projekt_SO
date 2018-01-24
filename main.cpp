@@ -244,7 +244,6 @@ Osadnicy builders;
 Dzieci kids;
 
 
-
 void *hunting(void *arg)
 {
     int H = rand()%6+1;
@@ -611,7 +610,8 @@ int main(int argc, char* argv[])
             if (kids.Dorosli() > 0)
             {
                 //Randomizacja zawodów
-                int L = rand()%6;
+                int L = rand()%5;
+		cout << L << endl;
                 if (L == 0) { hunters.Dodaj(); }
                 if (L == 1) { gatherers.Dodaj(); }
                 if (L == 2) { cooks.Dodaj(); }
@@ -638,6 +638,6 @@ int main(int argc, char* argv[])
     {
         cout << "Niepoprawna liczba argumentów \n";
     }
-    //log.close("my_log.txt");
+    log.close();
 }
 

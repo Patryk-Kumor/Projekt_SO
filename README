@@ -19,3 +19,4 @@ zbieraczy dodatkowego pożywienia o innym terminie przydatności do spożycia it
 Objaśnienie argumentów:
 ./main 5 5 15 4 1 0 50 75 200 0 23 odpowiada kolejno ilości:
 łowców, zbieraczy, kucharzy, drwali, budowlańców, dzieci, mięsa, roślin, pożywienia, drewna, domów
+Domyślny dobór osadników, wraz z odpowiednią implementacją zasobów daje im szansę na przeżycie
