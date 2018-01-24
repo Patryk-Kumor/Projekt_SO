@@ -248,7 +248,7 @@ void *hunting(void *arg)
 {
     int H = rand()%6+1;
     int Z = rand()%6+1;
-    if ((!is_winter && (H>=Z))||(is_winter && (H>(Z-2))))
+    if (  (not is_winter and (H>=Z) ) or (is_winter and (H>(Z-2)) )  )
     {
         pthread_mutex_lock(&m_meat);
         if (is_winter) { meat.Dodaj(5); }
@@ -289,13 +289,15 @@ void *hunting(void *arg)
 void *gathering(void *arg)
 {
     int L = rand()%12+1;
-    if ((!is_winter && (L >= 6))|| (is_winter && (L >= 8)))
+    if (  (not is_winter and (L>=6) ) or (is_winter and (L>=8) )  )
     {
         pthread_mutex_lock(&m_plants);
-        if (is_winter) { L = rand()%6+1; plants.Dodaj(L); }
-        else { L = rand()%8+1; plants.Dodaj(L); }
+        if (is_winter) { meat.Dodaj(5); }
+        else { meat.Dodaj(4); }
         pthread_mutex_unlock(&m_plants);
     }
+    pthread_mutex_lock(&m_food);
+
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -329,17 +331,34 @@ void *gathering(void *arg)
 }
 void *cooking(void *arg)
 {
-    int L1 = rand()%6+1;
-    int L2 = rand()%6+1;
-    pthread_mutex_lock(&m_food);
-    food.Dodaj(L1+L2);
-    pthread_mutex_unlock(&m_food);
     pthread_mutex_lock(&m_meat);
-    meat.Usun();
-    pthread_mutex_unlock(&m_meat);
+    if ( meat.Ile() > 0)
+    {
+        meat.Usun();
+        pthread_mutex_unlock(&m_meat);
+        int L = rand()%8+1;
+        pthread_mutex_lock(&m_food);
+        food.Dodaj(L);
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_meat);
+    }
     pthread_mutex_lock(&m_plants);
-    plants.Usun();
-    pthread_mutex_unlock(&m_plants);
+    if ( plants.Ile() > 0)
+    {
+        plants.Usun();
+        pthread_mutex_unlock(&m_plants);
+        int L = rand()%6+1;
+        pthread_mutex_lock(&m_food);
+        food.Dodaj(L);
+        pthread_mutex_unlock(&m_food);
+    }
+    else
+    {
+        pthread_mutex_unlock(&m_plants);
+    }
     pthread_mutex_lock(&m_food);
     if (food.Ile()>0)
     {
@@ -516,9 +535,9 @@ int main(int argc, char* argv[])
         int B = atoi(argv[5]); builders = Osadnicy(B,70);
         int K = atoi(argv[6]); kids = Dzieci(K);
         //Zasoby: pożywienie, mięso, rośliny, drewno, domy 
-        int M = atoi(argv[7]); meat = Jedzenie(M,25);
-        int P = atoi(argv[8]); plants = Jedzenie(P,15);
-        int F = atoi(argv[9]); food = Jedzenie(F,30);
+        int M = atoi(argv[7]); meat = Jedzenie(M,2500);
+        int P = atoi(argv[8]); plants = Jedzenie(P,1500);
+        int F = atoi(argv[9]); food = Jedzenie(F,3000);
         wood = atoi(argv[10]);
         houses = atoi(argv[11]);
         full_houses = 0;        
@@ -559,11 +578,11 @@ int main(int argc, char* argv[])
             }
             for (int i = 0; i<g; i++)
             {
-                pthread_create(&gatherers_t[i],NULL,cooking,NULL);
+                pthread_create(&gatherers_t[i],NULL,gathering,NULL);
             }
             for (int i = 0; i<c; i++)
             {
-                pthread_create(&cooks_t[i],NULL,hunting,NULL);
+                pthread_create(&cooks_t[i],NULL,cooking,NULL);
             }
             for (int i = 0; i<w; i++)
             {
@@ -611,7 +630,6 @@ int main(int argc, char* argv[])
             {
                 //Randomizacja zawodów
                 int L = rand()%5;
-		cout << L << endl;
                 if (L == 0) { hunters.Dodaj(); }
                 if (L == 1) { gatherers.Dodaj(); }
                 if (L == 2) { cooks.Dodaj(); }
